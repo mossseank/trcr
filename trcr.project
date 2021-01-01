@@ -1,0 +1,63 @@
+--
+-- MIT License - Copyright (c) 2021 Sean Moss
+-- This file is subject to the terms and conditions of the MIT License, the text of which can be found in the 'LICENSE'
+-- file at the root of this repository, or online at [https://opensource.org/licenses/MIT].
+--
+
+-- Premake solution generation script, written in Lua
+
+
+-- Workspace
+workspace "trcr"
+	-- Shared Settings
+	language "C++"
+	cppdialect "C++17"
+	location "build"
+	configurations { "Static" }
+	platforms { "x64" }
+	architecture "x86_64"
+	flags { "MultiProcessorCompile", "LinkTimeOptimization" }
+	targetdir "build/bin"
+
+	-- Release Settings
+	runtime "release"
+	symbols "off"
+	optimize "speed"
+	staticruntime "off"
+
+	-- Compiler Settings
+	systemversion "latest"
+	disablewarnings { "4099", "4251", "4275" }
+	defines { "_CRT_SECURE_NO_WARNINGS" }
+
+
+-- Tracing Library
+project "trcr"
+	-- Settings
+	includedirs { "include" }
+	targetname "trcr"
+	kind "StaticLib"
+
+	-- Project Files
+	files {
+		"include/trcr/**.hpp",
+		"include/trcr/**.cpp",
+		"trcr/**.hpp",
+		"trcr/**.cpp"
+	}
+
+
+-- Command Line Tool
+project "runtrace"
+	-- Settings
+	includedirs { "include" }
+	targetname "runtrace"
+	kind "ConsoleApp"
+	dependson { "trcr" }
+	links { "trcr" }
+
+	-- Project Files
+	files {
+		"runtrace/*.hpp",
+		"runtrace/*.cpp"
+	}
